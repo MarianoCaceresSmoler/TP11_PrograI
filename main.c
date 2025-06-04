@@ -1,5 +1,4 @@
 #include "hardware.h"
-#include "leds.h"
 #include <stdio.h>
 
 // Macros para manejo de entradas
@@ -14,48 +13,47 @@
 
 // Macros de estado del programa
 #define PROGRAM_END -1
-#define PROGRAM_ERROR 0
 #define PROGRAM_CONTINUE 1
 
 int main(void)
 {
 
-	init_leds();
+	hardware_init();
 
-	char input, sigCar, programStatus = PROGRAM_CONTINUE;
+	char input, sigCar;
+	int programStatus = PROGRAM_CONTINUE;
 
 	do
 	{
 		programStatus = PROGRAM_CONTINUE;
 
-		printf("\nPort A controller \n - Insert a number between 0 and 7 to turn on a bit \n - Insert t to toggle all bits \n - Insert s to turn on all bits \n - Insert c to turn off all bits \n - Insert q to exit \n");
+		printf("\nLEDs controller \n - Insert a number between 0 and 7 to toggle a LED \n - Insert t to toggle all LEDs \n - Insert s to turn on all LEDs \n - Insert c to turn off all LEDs \n - Insert q to exit \n");
 		input = getchar();
 
 		if((sigCar = getchar()) == '\n') // Verifica que el usuario ingresa un unico caracter
 		{
-			if(input >= '0' && input <= '7')
+			if(input >= '0' && input <= '7') // Si el usuario ingresa un numero valido, invierte el LED correspondiente
 			{
-				int bit = (int) (input - 48);
-				turnOnLED(bit);
+				int led = (int) (input - 48);
+				toggle_LED(led);
 			}
 			else
 			{
-				switch(input)
+				switch(input) // Si el usuario ingresa un caracter valido, ejecuta la accion correspondiente
 				{
 				case TOGGLE:
-					toggleAllLEDs();
+					toggle_all_LEDs();
 					break;
 				case TURN_ON:
-					turnOnAllLEDs();
+					turn_on_all_LEDs();
 					break;
 				case TURN_OFF:
-					turnOffAllLEDs();
+					turn_off_all_LEDs();
 					break;
 				case EXIT:
 					programStatus = PROGRAM_END; // Cambia el estado del programa para finalizar en caso de que ingrese 'q'
 					break;
 				default:
-					programStatus = PROGRAM_ERROR; // Cambia el estado del programa para no mostrar el valor de los leds en caso de error
 					printf(ERROR_MESSAGE);
 					break;
 				}
@@ -63,13 +61,14 @@ int main(void)
 		}
 		else
 		{
-			programStatus = PROGRAM_ERROR; // Cambia el estado del programa para no mostrar el valor de los leds en caso de error
 			printf(ERROR_MESSAGE);
 		}
 
 		if(sigCar != '\n') CLEAN_BUFFER; // Limpia buffer unicamente si es necesario
 
 	} while(programStatus != PROGRAM_END);
+
+	hardware_cleanup();
 
 	return 0;
 
