@@ -17,24 +17,23 @@
 
 int main(void)
 {
-
 	hardware_init();
 
-	char input, sigCar;
+	char input, nextCar;
 	int programStatus = PROGRAM_CONTINUE;
 
 	do
 	{
 		programStatus = PROGRAM_CONTINUE;
 
-		printf("\nLEDs controller \n - Insert a number between 0 and 7 to toggle a LED \n - Insert t to toggle all LEDs \n - Insert s to turn on all LEDs \n - Insert c to turn off all LEDs \n - Insert q to exit \n");
+		printf("\nLEDs controller \n - Insert a number between 1 and 8 to toggle a LED \n - Insert t to toggle all LEDs \n - Insert s to turn on all LEDs \n - Insert c to turn off all LEDs \n - Insert q to exit \n");
 		input = getchar();
 
-		if((sigCar = getchar()) == '\n') // Verifica que el usuario ingresa un unico caracter
+		if((nextCar = getchar()) == '\n') // Verifica que el usuario ingresa un unico caracter
 		{
-			if(input >= '0' && input <= '7') // Si el usuario ingresa un numero valido, invierte el LED correspondiente
+			if(input >= '1' && input <= '8') // Si el usuario ingresa un numero valido, invierte el LED correspondiente
 			{
-				int led = (int) (input - 48);
+				int led = (int) (input - 49); // Castea el caracter a su entero correspondiente -1 (el arreglo de led_gpios arranca en cero, no en 1)
 				toggle_LED(led);
 			}
 			else
@@ -64,7 +63,7 @@ int main(void)
 			printf(ERROR_MESSAGE);
 		}
 
-		if(sigCar != '\n') CLEAN_BUFFER; // Limpia buffer unicamente si es necesario
+		if(nextCar != '\n') CLEAN_BUFFER; // Limpia buffer unicamente si es necesario
 
 	} while(programStatus != PROGRAM_END);
 
